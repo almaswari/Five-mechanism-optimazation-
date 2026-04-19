@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mujoco>
+    
+   
+    <option gravity="0 0 -9.81"/>
+
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1="1 1 1" rgb2="0.5 0.5 0.5" width="265" height="256"/>
+        <texture name="grid" type="2d" builtin="checker" rgb1="0.1 0.1 0.1" rgb2="0.6 0.6 0.6" width="300" height="300"/>
+        <material name="grid" texture="grid" texrepeat="10 10" reflectance="0.2"/>
+        <material name="base" rgba="1 0 1 1" shininess="0.5" specular="1"/> 
+        <material name="link1" rgba="0 1 0 1" shininess="0.5" specular="1"/> 
+        <material name="link2" rgba="0 0 1 1" shininess="0.5" specular="1"/> 
+        <material name="joint_shape" rgba="0.89 0.14 0.16 0.5" shininess="0.5" specular="1"/>
+    </asset>
+
+   
+
+    <worldbody>
+        <light pos="0 0 10"/>
+        <geom type="plane" size="10 10 0.1" material="grid" friction="1 0.1 0.1"/>
+        
+        <camera name="side view" pos="0.1 -1.5 1.0" euler="90 0 0" fovy="60"/>
+        <camera name="upper view" pos="0 0 1.5" euler="0 0 0"/>
+
+        <body name="base" pos="0 0 1">
+            <joint name="slider" type="slide" axis="0 0 1" range="-1 5"/>
+            <geom name="base" type="box" size="0.25 0.05 0.05" mass="0.5" material="base" contype="1" conaffinity="1"/>
+            <site name="box_s"/>
+            
+            <body name="link1" pos="0.2 0.07  0">         
+                <joint name="A" type="hinge" axis="0 1 0"  range="-80 80" damping="0.1"/>
+                <geom name="joint_shape1" type="cylinder" size="0.02 0.02" material="joint_shape" pos="0 0 0" euler="90 0 0" contype="0" />
+                <geom name="link1" type="capsule" size="0.02 0.175" material="link1" pos="0 0  -0.175" contype="1" conaffinity="1"/>
+
+                <body name="link2" pos="0 0 -0.37">
+
+                    <joint name="B" type="hinge" axis="0 1 0" range="-60 60" damping="0.1"/>
+                    <geom name="joint_shape2" type="cylinder" size="0.02 0.02" mass="0.0" material="joint_shape" euler="90 0 0" contype="1" conaffinity="1"/>
+                    <geom name="link2" type="capsule" size="0.02 0.2" material="link2" pos="0 0 -0.21000000000000002" contype="1" conaffinity="1"/>
+                    
+                    
+                    <site name="sc1" size="0.01" pos="0 0 -0.42000000000000004"/>
+                </body>
+
+            </body>
+
+            <body name="link3" pos="-0.2 0.07  0">         
+                <joint name="C" type="hinge" axis="0 1 0" range="-80 80" damping="0.1"/>
+                <geom name="joint_shape3" type="cylinder" size="0.02 0.02" mass="0.0" material="joint_shape" pos="0 0 0" euler="90 0 0" contype="1" conaffinity="1"/>
+                <geom name="link3" type="capsule" size="0.02 0.175" material="link1" pos="0 0  -0.175" contype="1" conaffinity="1"/>
+
+                <body name="link4" pos="0 0 -0.37">
+
+                    <joint name="D" type="hinge" axis="0 1 0" range="-60 60" damping="0.1"/>
+                    <geom name="joint_shape4" type="cylinder" size="0.02 0.02" material="joint_shape" euler="90 0 0" contype="1" conaffinity="1"/>
+                    <geom name="link4" type="capsule" size="0.02 0.2" material="link2" pos="0 0 -0.21000000000000002" contype="1" conaffinity="1"/>
+                    <site name="sc2" size="0.01" pos="0 0 -0.42000000000000004"/>
+                    
+                    
+                    
+                </body>
+
+            </body>
+        </body>
+        
+    </worldbody>
+    <!-- slider   A      B       C      D -->
+    <keyframe>
+        <key name="home" qpos="0.0   15.0  -30.0  15.0   0.0"/>
+    </keyframe>
+
+    <equality>
+
+        <connect site1="sc1" site2="sc2"/>
+    </equality>
+
+    <sensor>
+
+        <framepos objtype="site" objname="box_s"/>
+        <framepos objtype="site" objname="sc1"/>
+
+        <touch name="link2_contact" site="sc1"/>
+
+        
+        <framelinvel objtype="site" objname="sc1"/>
+
+       
+       
+    </sensor>
+
+    <actuator>
+        <motor name="A" joint="A"/>
+        <motor name="C" joint="C"/>
+       
+    </actuator>
+
+    
+
+
+</mujoco>
